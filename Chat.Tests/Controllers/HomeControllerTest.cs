@@ -11,7 +11,7 @@ namespace Chat.Tests.Controllers
 {
 	[TestClass]
 	public class HomeControllerTest
-	{
+	{e
 		[TestMethod]
 		public void Index()
 		{
