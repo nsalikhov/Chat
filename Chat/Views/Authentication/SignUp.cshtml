@@ -1,0 +1,26 @@
+﻿@model dynamic
+
+@{
+	ViewBag.Title = "Sign Up";
+}
+
+@using (Html.BeginForm("SignUp", "Authentication", FormMethod.Post, new { @class = "form-horizontal" }))
+{
+	<div class="form-group">
+		<label for="login" class="col-sm-2 control-label">Login</label>
+		<div class="col-sm-10">
+			<input type="text" class="form-control" id="login" />
+		</div>
+	</div>
+	<div class="form-group">
+		<label for="password" class="col-sm-2 control-label">Password</label>
+		<div class="col-sm-10">
+			<input type="password" class="form-control" id="password" />
+		</div>
+	</div>
+	<div class="form-group">
+		<div class="col-sm-offset-2 col-sm-10">
+			<button type="submit" class="btn btn-default">Sign up</button>
+		</div>
+	</div>
+}
