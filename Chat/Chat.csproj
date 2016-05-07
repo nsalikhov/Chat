@@ -118,8 +118,11 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\GuidProvider.cs" />
+    <Compile Include="Helpers\IGuidProvider.cs" />
     <Compile Include="Helpers\ModelStateExtensions.cs" />
     <Compile Include="Managers\IUserManager.cs" />
+    <Compile Include="Managers\UserManager.cs" />
     <Compile Include="Models\SignInModel.cs" />
     <Compile Include="Models\SignUpModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -128,6 +131,8 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>AuthenticationResource.resx</DependentUpon>
     </Compile>
+    <Compile Include="Security\IPasswordConverter.cs" />
+    <Compile Include="Security\PasswordConverter.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-theme.css" />
@@ -172,7 +177,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Authentication\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
