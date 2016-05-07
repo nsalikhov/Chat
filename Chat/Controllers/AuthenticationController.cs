@@ -1,4 +1,5 @@
-﻿using System.Web.Mvc;
+﻿using System.Threading.Tasks;
+using System.Web.Mvc;
 
 using Chat.Helpers;
 using Chat.Managers;
@@ -24,13 +25,13 @@ namespace Chat.Controllers
 		}
 
 		[HttpPost]
-		public ActionResult SignIn(SignInModel model)
+		public async Task<ActionResult> SignIn(SignInModel model)
 		{
 			if (ModelState.IsValid)
 			{
 				try
 				{
-					if (_userManager.CheckUserPassword(model.Login, model.Password))
+					if (await _userManager.CheckUserPassword(model.Login, model.Password))
 					{
 						return RedirectToAction("Index", "Home");
 					}
@@ -52,13 +53,13 @@ namespace Chat.Controllers
 		}
 
 		[HttpPost]
-		public ActionResult SignUp(SignUpModel model)
+		public async Task<ActionResult> SignUp(SignUpModel model)
 		{
 			if (ModelState.IsValid)
 			{
 				try
 				{
-					_userManager.CreateUser(model.Login, model.Password);
+					await _userManager.CreateUser(model.Login, model.Password);
 
 					return RedirectToAction("SignIn");
 				}

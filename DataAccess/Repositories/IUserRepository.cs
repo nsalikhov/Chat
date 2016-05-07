@@ -1,4 +1,6 @@
-﻿using DataAccess.Entities;
+﻿using System.Threading.Tasks;
+
+using DataAccess.Entities;
 
 
 
@@ -6,8 +8,8 @@ namespace DataAccess.Repositories
 {
 	public interface IUserRepository
 	{
-		void Add(User user);
+		Task Add(User user);
 
-		User GetByLogin(string login);
+		Task<User> GetByLogin(string login);
 	}
 }

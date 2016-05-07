@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using System.Threading.Tasks;
 
 using DataAccess.Entities;
 using DataAccess.Exceptions;
@@ -11,15 +12,17 @@ namespace DataAccess.Repositories
 	{
 		#region Implementation of IUserRepository
 
-		public void Add(User user)
+		public Task Add(User user)
 		{
 			if (!Users.TryAdd(user.Login, user))
 			{
 				throw new EntityAlreadyExistsException();
 			}
+
+			return Task.FromResult(false);
 		}
 
-		public User GetByLogin(string login)
+		public Task<User> GetByLogin(string login)
 		{
 			User user;
 			if (!Users.TryGetValue(login, out user))
@@ -27,7 +30,7 @@ namespace DataAccess.Repositories
 				throw new EntityNotFoundException();
 			}
 
-			return user;
+			return Task.FromResult(user);
 		}
 
 		#endregion

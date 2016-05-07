@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading.Tasks;
 
 using Chat.Helpers;
 using Chat.Managers;
@@ -53,9 +54,9 @@ namespace Chat.Tests.Managers
 
 			_guidProvider.Setup(x => x.NewGuid()).Returns(guid);
 			_passwordConverter.Setup(x => x.GetPasswordHash(password, guid.ToString())).Returns(passwordHash);
-			_userRepository.Setup(x => x.Add(It.Is<User>(u => CheckUser(expectedUser, u))));
+			_userRepository.Setup(x => x.Add(It.Is<User>(u => CheckUser(expectedUser, u)))).Returns(Task.FromResult(false));
 
-			var user = _target.CreateUser(login, password);
+			var user = _target.CreateUser(login, password).Result;
 
 			_guidProvider.Verify(x => x.NewGuid(), Times.Once);
 			_passwordConverter.Verify(x => x.GetPasswordHash(password, guid.ToString()), Times.Once);
@@ -71,10 +72,10 @@ namespace Chat.Tests.Managers
 			var password = _fixture.Create<string>();
 			var user = _fixture.Create<User>();
 
-			_userRepository.Setup(x => x.GetByLogin(login)).Returns(user);
+			_userRepository.Setup(x => x.GetByLogin(login)).Returns(Task.FromResult(user));
 			_passwordConverter.Setup(x => x.GetPasswordHash(password, user.PasswordSalt)).Returns(user.PasswordHash);
 
-			var result = _target.CheckUserPassword(login, password);
+			var result = _target.CheckUserPassword(login, password).Result;
 
 			_userRepository.Verify(x => x.GetByLogin(login), Times.Once);
 			_passwordConverter.Verify(x => x.GetPasswordHash(password, user.PasswordSalt), Times.Once);
@@ -89,10 +90,10 @@ namespace Chat.Tests.Managers
 			var password = _fixture.Create<string>();
 			var user = _fixture.Create<User>();
 
-			_userRepository.Setup(x => x.GetByLogin(login)).Returns(user);
+			_userRepository.Setup(x => x.GetByLogin(login)).Returns(Task.FromResult(user));
 			_passwordConverter.Setup(x => x.GetPasswordHash(password, user.PasswordSalt)).Returns(_fixture.Create<string>());
 
-			var result = _target.CheckUserPassword(login, password);
+			var result = _target.CheckUserPassword(login, password).Result;
 
 			_userRepository.Verify(x => x.GetByLogin(login), Times.Once);
 			_passwordConverter.Verify(x => x.GetPasswordHash(password, user.PasswordSalt), Times.Once);
@@ -107,10 +108,11 @@ namespace Chat.Tests.Managers
 			return true;
 		}
 
+		private IFixture _fixture;
+
 		private Mock<IGuidProvider> _guidProvider;
 		private Mock<IPasswordConverter> _passwordConverter;
-		private Mock<IUserRepository> _userRepository;
-		private IFixture _fixture;
 		private UserManager _target;
+		private Mock<IUserRepository> _userRepository;
 	}
 }

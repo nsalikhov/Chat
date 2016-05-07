@@ -1,4 +1,6 @@
-﻿using Chat.Helpers;
+﻿using System.Threading.Tasks;
+
+using Chat.Helpers;
 using Chat.Security;
 
 using DataAccess.Entities;
@@ -19,7 +21,7 @@ namespace Chat.Managers
 
 		#region Implementation of IUserManager
 
-		public User CreateUser(string login, string password)
+		public async Task<User> CreateUser(string login, string password)
 		{
 			var salt = _guidProvider.NewGuid().ToString();
 			var passwordHash = _passwordConverter.GetPasswordHash(password, salt);
@@ -31,14 +33,14 @@ namespace Chat.Managers
 				PasswordSalt = salt
 			};
 
-			_userRepository.Add(user);
+			await _userRepository.Add(user);
 
 			return user;
 		}
 
-		public bool CheckUserPassword(string login, string password)
+		public async Task<bool> CheckUserPassword(string login, string password)
 		{
-			var user = _userRepository.GetByLogin(login);
+			var user = await _userRepository.GetByLogin(login);
 
 			var hash = _passwordConverter.GetPasswordHash(password, user.PasswordSalt);
 

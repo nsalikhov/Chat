@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 
 using Chat.Controllers;
@@ -46,9 +47,9 @@ namespace Chat.Tests.Controllers
 		{
 			var model = _fixture.Create<SignInModel>();
 
-			_userManager.Setup(x => x.CheckUserPassword(model.Login, model.Password)).Returns(true);
+			_userManager.Setup(x => x.CheckUserPassword(model.Login, model.Password)).Returns(Task.FromResult(true));
 
-			var result = _target.SignIn(model) as RedirectToRouteResult;
+			var result = _target.SignIn(model).Result as RedirectToRouteResult;
 
 			_userManager.Verify(x => x.CheckUserPassword(model.Login, model.Password), Times.Once);
 
@@ -64,7 +65,7 @@ namespace Chat.Tests.Controllers
 
 			_target.ModelState.AddModelError(_fixture.Create<string>(), _fixture.Create<string>());
 
-			var result = _target.SignIn(model) as ViewResult;
+			var result = _target.SignIn(model).Result as ViewResult;
 
 			Assert.IsNotNull(result);
 		}
@@ -74,9 +75,9 @@ namespace Chat.Tests.Controllers
 		{
 			var model = _fixture.Create<SignInModel>();
 
-			_userManager.Setup(x => x.CheckUserPassword(model.Login, model.Password)).Returns(false);
+			_userManager.Setup(x => x.CheckUserPassword(model.Login, model.Password)).Returns(Task.FromResult(false));
 
-			var result = _target.SignIn(model) as ViewResult;
+			var result = _target.SignIn(model).Result as ViewResult;
 
 			_userManager.Verify(x => x.CheckUserPassword(model.Login, model.Password), Times.Once);
 
@@ -89,14 +90,15 @@ namespace Chat.Tests.Controllers
 		{
 			var model = _fixture.Create<SignInModel>();
 
-			_userManager.Setup(x => x.CheckUserPassword(model.Login, model.Password)).Throws<EntityNotFoundException>();
+			_userManager.Setup(x => x.CheckUserPassword(model.Login, model.Password)).ThrowsAsync(new EntityNotFoundException());
 
-			var result = _target.SignIn(model) as ViewResult;
+			var result = _target.SignIn(model).Result as ViewResult;
 
 			_userManager.Verify(x => x.CheckUserPassword(model.Login, model.Password), Times.Once);
 
 			Assert.IsNotNull(result);
-			Assert.AreEqual(string.Format(AuthenticationResource.UserNotFoundErrorMessage, model.Login), _target.ModelState["Login"].Errors.Single().ErrorMessage);
+			Assert.AreEqual(string.Format(AuthenticationResource.UserNotFoundErrorMessage, model.Login),
+							_target.ModelState["Login"].Errors.Single().ErrorMessage);
 		}
 
 		[TestMethod]
@@ -112,9 +114,9 @@ namespace Chat.Tests.Controllers
 		{
 			var model = _fixture.Create<SignUpModel>();
 
-			_userManager.Setup(x => x.CreateUser(model.Login, model.Password)).Returns<User>(null);
+			_userManager.Setup(x => x.CreateUser(model.Login, model.Password)).Returns(Task.FromResult<User>(null));
 
-			var result = _target.SignUp(model) as RedirectToRouteResult;
+			var result = _target.SignUp(model).Result as RedirectToRouteResult;
 
 			_userManager.Verify(x => x.CreateUser(model.Login, model.Password), Times.Once);
 
@@ -129,7 +131,7 @@ namespace Chat.Tests.Controllers
 
 			_target.ModelState.AddModelError(_fixture.Create<string>(), _fixture.Create<string>());
 
-			var result = _target.SignUp(model) as ViewResult;
+			var result = _target.SignUp(model).Result as ViewResult;
 
 			Assert.IsNotNull(result);
 		}
@@ -139,18 +141,19 @@ namespace Chat.Tests.Controllers
 		{
 			var model = _fixture.Create<SignUpModel>();
 
-			_userManager.Setup(x => x.CreateUser(model.Login, model.Password)).Throws<EntityAlreadyExistsException>();
+			_userManager.Setup(x => x.CreateUser(model.Login, model.Password)).ThrowsAsync(new EntityAlreadyExistsException());
 
-			var result = _target.SignUp(model) as ViewResult;
+			var result = _target.SignUp(model).Result as ViewResult;
 
 			_userManager.Verify(x => x.CreateUser(model.Login, model.Password), Times.Once);
 
 			Assert.IsNotNull(result);
-			Assert.AreEqual(string.Format(AuthenticationResource.UserAlreadyExistsErrorMessage, model.Login), _target.ModelState["Login"].Errors.Single().ErrorMessage);
+			Assert.AreEqual(string.Format(AuthenticationResource.UserAlreadyExistsErrorMessage, model.Login),
+							_target.ModelState["Login"].Errors.Single().ErrorMessage);
 		}
 
 		private IFixture _fixture;
-		private Mock<IUserManager> _userManager;
 		private AuthenticationController _target;
+		private Mock<IUserManager> _userManager;
 	}
 }
