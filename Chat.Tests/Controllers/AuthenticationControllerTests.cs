@@ -7,6 +7,7 @@ using Chat.Managers;
 using Chat.Models;
 using Chat.Resources;
 
+using DataAccess.Entities;
 using DataAccess.Exceptions;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -96,6 +97,56 @@ namespace Chat.Tests.Controllers
 
 			Assert.IsNotNull(result);
 			Assert.AreEqual(string.Format(AuthenticationResource.UserNotFoundErrorMessage, model.Login), _target.ModelState["Login"].Errors.Single().ErrorMessage);
+		}
+
+		[TestMethod]
+		public void SignUp_Get_Test()
+		{
+			var result = _target.SignUp();
+
+			Assert.IsNotNull(result);
+		}
+
+		[TestMethod]
+		public void SignUp_Post_Test()
+		{
+			var model = _fixture.Create<SignUpModel>();
+
+			_userManager.Setup(x => x.CreateUser(model.Login, model.Password)).Returns<User>(null);
+
+			var result = _target.SignUp(model) as RedirectToRouteResult;
+
+			_userManager.Verify(x => x.CreateUser(model.Login, model.Password), Times.Once);
+
+			Assert.IsNotNull(result);
+			Assert.AreEqual("SignIn", result.RouteValues["action"]);
+		}
+
+		[TestMethod]
+		public void SignUp_Post_InvalidModel_Test()
+		{
+			var model = _fixture.Create<SignUpModel>();
+
+			_target.ModelState.AddModelError(_fixture.Create<string>(), _fixture.Create<string>());
+
+			var result = _target.SignUp(model) as ViewResult;
+
+			Assert.IsNotNull(result);
+		}
+
+		[TestMethod]
+		public void SignUp_Post_UserAlreadyExists_Test()
+		{
+			var model = _fixture.Create<SignUpModel>();
+
+			_userManager.Setup(x => x.CreateUser(model.Login, model.Password)).Throws<EntityAlreadyExistsException>();
+
+			var result = _target.SignUp(model) as ViewResult;
+
+			_userManager.Verify(x => x.CreateUser(model.Login, model.Password), Times.Once);
+
+			Assert.IsNotNull(result);
+			Assert.AreEqual(string.Format(AuthenticationResource.UserAlreadyExistsErrorMessage, model.Login), _target.ModelState["Login"].Errors.Single().ErrorMessage);
 		}
 
 		private IFixture _fixture;

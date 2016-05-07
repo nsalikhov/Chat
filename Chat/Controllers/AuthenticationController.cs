@@ -54,12 +54,21 @@ namespace Chat.Controllers
 		[HttpPost]
 		public ActionResult SignUp(SignUpModel model)
 		{
-			if (!ModelState.IsValid)
+			if (ModelState.IsValid)
 			{
-				return View("SignUp");
+				try
+				{
+					_userManager.CreateUser(model.Login, model.Password);
+
+					return RedirectToAction("SignIn");
+				}
+				catch (EntityAlreadyExistsException)
+				{
+					ModelState.AddModelError(m => model.Login, string.Format(AuthenticationResource.UserAlreadyExistsErrorMessage, model.Login));
+				}
 			}
 
-			return RedirectToAction("Index", "Home");
+			return View("SignUp");
 		}
 
 		private readonly IUserManager _userManager;
