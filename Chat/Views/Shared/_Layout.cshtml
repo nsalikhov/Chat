@@ -1,9 +1,10 @@
-﻿<!DOCTYPE html>
+﻿@using Chat.Resources
+<!DOCTYPE html>
 <html>
 	<head>
 		<meta charset="utf-8"/>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<title>Simple chat</title>
+		<title>@SharedResource.Title</title>
 		@Styles.Render("~/Content/css")
 	</head>
 	<body>
@@ -27,12 +28,12 @@
 						@if (Request.IsAuthenticated)
 						{
 							<li><p class="navbar-text"><span class="glyphicon glyphicon-user"></span> @User.Identity.Name</p></li>
-							<li><a href="@Url.Action("SignOut", "Authentication")"><span class="glyphicon glyphicon-log-out"></span> Sign Out</a></li>
+							<li><a href="@Url.Action("SignOut", "Authentication")"><span class="glyphicon glyphicon-log-out"></span> @SharedResource.SignOutLinkText</a></li>
 						}
 						else
 						{
-							<li><a href="@Url.Action("SignUp", "Authentication")"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
-							<li><a href="@Url.Action("SignIn", "Authentication")"><span class="glyphicon glyphicon-log-in"></span> Sign In</a></li>
+							<li><a href="@Url.Action("SignUp", "Authentication")"><span class="glyphicon glyphicon-user"></span> @SharedResource.SignUpLinkText</a></li>
+							<li><a href="@Url.Action("SignIn", "Authentication")"><span class="glyphicon glyphicon-log-in"></span> @SharedResource.SignInLinkText</a></li>
 						}
 					</ul>
 				</div>
@@ -45,7 +46,7 @@
 			{
 				<div class="alert alert-danger" role="alert">
 					<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-					<strong>Validation errors:</strong>
+					<strong>@SharedResource.ValidationErrorsLabelText:</strong>
 					<div>
 						@Html.ValidationSummary()
 					</div>
@@ -56,12 +57,12 @@
 
 			<hr/>
 			<footer>
-				<p>@DateTime.Now.Year - All lefts reversed</p>
+				<p>@DateTime.Now.Year - @SharedResource.CopyleftLabelText</p>
 			</footer>
 		</div>
 
 		@Scripts.Render("~/bundles/jquery")
 		@Scripts.Render("~/bundles/bootstrap")
-		@RenderSection("scripts", required: false)
+		@RenderSection("scripts", false)
 	</body>
 </html>
