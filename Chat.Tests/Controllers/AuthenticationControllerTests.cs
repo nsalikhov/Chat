@@ -7,6 +7,7 @@ using Chat.Controllers;
 using Chat.Managers;
 using Chat.Models;
 using Chat.Resources;
+using Chat.Security;
 
 using DataAccess.Entities;
 using DataAccess.Exceptions;
@@ -29,9 +30,11 @@ namespace Chat.Tests.Controllers
 		public void TestInitialize()
 		{
 			_fixture = new Fixture();
-			_userManager = new Mock<IUserManager>(MockBehavior.Strict);
 
-			_target = new AuthenticationController(_userManager.Object);
+			_userManager = new Mock<IUserManager>(MockBehavior.Strict);
+			_authenticationService = new Mock<IAuthenticationService>(MockBehavior.Strict);
+
+			_target = new AuthenticationController(_authenticationService.Object, _userManager.Object);
 		}
 
 		[TestMethod]
@@ -47,11 +50,11 @@ namespace Chat.Tests.Controllers
 		{
 			var model = _fixture.Create<SignInModel>();
 
-			_userManager.Setup(x => x.CheckUserPassword(model.Login, model.Password)).Returns(Task.FromResult(true));
+			_authenticationService.Setup(x => x.Authenticate(model.Login, model.Password, model.RememberMe)).Returns(Task.FromResult(true));
 
 			var result = _target.SignIn(model).Result as RedirectToRouteResult;
 
-			_userManager.Verify(x => x.CheckUserPassword(model.Login, model.Password), Times.Once);
+			_authenticationService.Verify(x => x.Authenticate(model.Login, model.Password, model.RememberMe), Times.Once);
 
 			Assert.IsNotNull(result);
 			Assert.AreEqual("Index", result.RouteValues["action"]);
@@ -75,11 +78,11 @@ namespace Chat.Tests.Controllers
 		{
 			var model = _fixture.Create<SignInModel>();
 
-			_userManager.Setup(x => x.CheckUserPassword(model.Login, model.Password)).Returns(Task.FromResult(false));
+			_authenticationService.Setup(x => x.Authenticate(model.Login, model.Password, model.RememberMe)).Returns(Task.FromResult(false));
 
 			var result = _target.SignIn(model).Result as ViewResult;
 
-			_userManager.Verify(x => x.CheckUserPassword(model.Login, model.Password), Times.Once);
+			_authenticationService.Verify(x => x.Authenticate(model.Login, model.Password, model.RememberMe), Times.Once);
 
 			Assert.IsNotNull(result);
 			Assert.AreEqual(AuthenticationResource.InvalidPasswordErrorMessage, _target.ModelState["Login"].Errors.Single().ErrorMessage);
@@ -90,11 +93,11 @@ namespace Chat.Tests.Controllers
 		{
 			var model = _fixture.Create<SignInModel>();
 
-			_userManager.Setup(x => x.CheckUserPassword(model.Login, model.Password)).ThrowsAsync(new EntityNotFoundException());
+			_authenticationService.Setup(x => x.Authenticate(model.Login, model.Password, model.RememberMe)).ThrowsAsync(new EntityNotFoundException());
 
 			var result = _target.SignIn(model).Result as ViewResult;
 
-			_userManager.Verify(x => x.CheckUserPassword(model.Login, model.Password), Times.Once);
+			_authenticationService.Verify(x => x.Authenticate(model.Login, model.Password, model.RememberMe), Times.Once);
 
 			Assert.IsNotNull(result);
 			Assert.AreEqual(
@@ -157,5 +160,6 @@ namespace Chat.Tests.Controllers
 		private IFixture _fixture;
 		private AuthenticationController _target;
 		private Mock<IUserManager> _userManager;
+		private Mock<IAuthenticationService> _authenticationService;
 	}
 }

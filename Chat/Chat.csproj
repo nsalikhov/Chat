@@ -156,6 +156,8 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>AuthenticationResource.resx</DependentUpon>
     </Compile>
+    <Compile Include="Security\AuthenticationService.cs" />
+    <Compile Include="Security\IAuthenticationService.cs" />
     <Compile Include="Security\IPasswordConverter.cs" />
     <Compile Include="Security\PasswordConverter.cs" />
   </ItemGroup>

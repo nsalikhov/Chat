@@ -5,6 +5,7 @@ using Chat.Helpers;
 using Chat.Managers;
 using Chat.Models;
 using Chat.Resources;
+using Chat.Security;
 
 using DataAccess.Exceptions;
 
@@ -14,9 +15,10 @@ namespace Chat.Controllers
 {
 	public class AuthenticationController : Controller
 	{
-		public AuthenticationController(IUserManager userManager)
+		public AuthenticationController(IAuthenticationService authenticationService, IUserManager userManager)
 		{
 			_userManager = userManager;
+			_authenticationService = authenticationService;
 		}
 
 		public ViewResult SignIn()
@@ -31,7 +33,7 @@ namespace Chat.Controllers
 			{
 				try
 				{
-					if (await _userManager.CheckUserPassword(model.Login, model.Password))
+					if (await _authenticationService.Authenticate(model.Login, model.Password, model.RememberMe))
 					{
 						return RedirectToAction("Index", "Home");
 					}
@@ -44,7 +46,7 @@ namespace Chat.Controllers
 				}
 			}
 
-			return View("SignUp");
+			return View("SignIn");
 		}
 
 		public ActionResult SignUp()
@@ -72,6 +74,7 @@ namespace Chat.Controllers
 			return View("SignUp");
 		}
 
+		private readonly IAuthenticationService _authenticationService;
 		private readonly IUserManager _userManager;
 	}
 }

@@ -120,6 +120,24 @@
   <data name="InvalidPasswordErrorMessage" xml:space="preserve">
     <value>Invalid password.</value>
   </data>
+  <data name="LoginLabelText" xml:space="preserve">
+    <value>Login</value>
+  </data>
+  <data name="PasswordLabelText" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="RegisterLinkText" xml:space="preserve">
+    <value>Create an account</value>
+  </data>
+  <data name="RememberMeLabelText" xml:space="preserve">
+    <value>Remember me</value>
+  </data>
+  <data name="SignInButtonText" xml:space="preserve">
+    <value>Sign In</value>
+  </data>
+  <data name="SignUpButtonText" xml:space="preserve">
+    <value>Sign Up</value>
+  </data>
   <data name="UserAlreadyExistsErrorMessage" xml:space="preserve">
     <value>Someone already has login "{0}". Please, try another value.</value>
   </data>

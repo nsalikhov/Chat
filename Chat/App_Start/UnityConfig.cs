@@ -34,6 +34,7 @@ namespace Chat
 			container.RegisterType<IGuidProvider, GuidProvider>(new ContainerControlledLifetimeManager());
 			container.RegisterType<IPasswordConverter, PasswordConverter>(new ContainerControlledLifetimeManager());
 
+			container.RegisterType<IAuthenticationService, AuthenticationService>();
 			container.RegisterType<IUserRepository, UserInMemoryRepository>();
 			container.RegisterType<IUserManager, UserManager>();
 
