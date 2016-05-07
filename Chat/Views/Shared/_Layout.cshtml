@@ -23,6 +23,18 @@
 						<li>@Html.ActionLink("About", "About", "Home")</li>
 						<li>@Html.ActionLink("Contact", "Contact", "Home")</li>
 					</ul>
+					<ul class="nav navbar-nav navbar-right">
+						@if (Request.IsAuthenticated)
+						{
+							<li><p class="navbar-text"><span class="glyphicon glyphicon-user"></span> @User.Identity.Name</p></li>
+							<li><a href="@Url.Action("SignOut", "Authentication")"><span class="glyphicon glyphicon-log-out"></span> Sign Out</a></li>
+						}
+						else
+						{
+							<li><a href="@Url.Action("SignUp", "Authentication")"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
+							<li><a href="@Url.Action("SignIn", "Authentication")"><span class="glyphicon glyphicon-log-in"></span> Sign In</a></li>
+						}
+					</ul>
 				</div>
 			</div>
 		</div>

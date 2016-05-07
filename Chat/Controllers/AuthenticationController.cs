@@ -74,6 +74,13 @@ namespace Chat.Controllers
 			return View("SignUp");
 		}
 
+		public RedirectToRouteResult SignOut()
+		{
+			_authenticationService.SignOut();
+
+			return RedirectToAction("Index", "Home");
+		}
+
 		private readonly IAuthenticationService _authenticationService;
 		private readonly IUserManager _userManager;
 	}

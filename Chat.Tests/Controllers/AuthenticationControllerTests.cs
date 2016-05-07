@@ -157,6 +157,20 @@ namespace Chat.Tests.Controllers
 				_target.ModelState["Login"].Errors.Single().ErrorMessage);
 		}
 
+		[TestMethod]
+		public void SignOut_Test()
+		{
+			_authenticationService.Setup(x => x.SignOut());
+
+			var result = _target.SignOut();
+
+			_authenticationService.Verify(x => x.SignOut(), Times.Once);
+
+			Assert.IsNotNull(result);
+			Assert.AreEqual("Index", result.RouteValues["action"]);
+			Assert.AreEqual("Home", result.RouteValues["controller"]);
+		}
+
 		private IFixture _fixture;
 		private AuthenticationController _target;
 		private Mock<IUserManager> _userManager;
