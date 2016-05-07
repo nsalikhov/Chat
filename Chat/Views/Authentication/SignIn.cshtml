@@ -1,4 +1,4 @@
-﻿@model Chat.Models.UserModel
+﻿@model Chat.Models.SignInModel
 
 @{
 	ViewBag.Title = "Sign In";
@@ -9,20 +9,20 @@
 	<div class="form-group">
 		<label for="login" class="col-sm-2 control-label">Login</label>
 		<div class="col-sm-10">
-			<input type="text" class="form-control" id="login" />
+			<input type="text" class="form-control" id="login"/>
 		</div>
 	</div>
 	<div class="form-group">
 		<label for="password" class="col-sm-2 control-label">Password</label>
 		<div class="col-sm-10">
-			<input type="password" class="form-control" id="password" />
+			<input type="password" class="form-control" id="password"/>
 		</div>
 	</div>
 	<div class="form-group">
 		<div class="col-sm-offset-2 col-sm-10">
 			<div class="checkbox">
 				<label>
-					<input type="checkbox"> Remember me
+					<input type="checkbox" id="rememberme"> Remember me
 				</label>
 			</div>
 		</div>

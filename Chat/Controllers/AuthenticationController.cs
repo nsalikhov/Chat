@@ -14,7 +14,7 @@ namespace Chat.Controllers
 		}
 
 		[HttpPost]
-		public ActionResult SignIn(UserModel model)
+		public ActionResult SignIn(SignInModel model)
 		{
 			if (!ModelState.IsValid)
 			{
@@ -30,11 +30,11 @@ namespace Chat.Controllers
 		}
 
 		[HttpPost]
-		public ActionResult SignUp(UserModel model)
+		public ActionResult SignUp(SignUpModel model)
 		{
 			if (!ModelState.IsValid)
 			{
-				return View("SignIn");
+				return View("SignUp");
 			}
 
 			return RedirectToAction("Index", "Home");
