@@ -109,7 +109,6 @@ namespace Chat.Tests.Managers
 		}
 
 		private IFixture _fixture;
-
 		private Mock<IGuidProvider> _guidProvider;
 		private Mock<IPasswordConverter> _passwordConverter;
 		private UserManager _target;

@@ -97,8 +97,9 @@ namespace Chat.Tests.Controllers
 			_userManager.Verify(x => x.CheckUserPassword(model.Login, model.Password), Times.Once);
 
 			Assert.IsNotNull(result);
-			Assert.AreEqual(string.Format(AuthenticationResource.UserNotFoundErrorMessage, model.Login),
-							_target.ModelState["Login"].Errors.Single().ErrorMessage);
+			Assert.AreEqual(
+				string.Format(AuthenticationResource.UserNotFoundErrorMessage, model.Login),
+				_target.ModelState["Login"].Errors.Single().ErrorMessage);
 		}
 
 		[TestMethod]
@@ -148,8 +149,9 @@ namespace Chat.Tests.Controllers
 			_userManager.Verify(x => x.CreateUser(model.Login, model.Password), Times.Once);
 
 			Assert.IsNotNull(result);
-			Assert.AreEqual(string.Format(AuthenticationResource.UserAlreadyExistsErrorMessage, model.Login),
-							_target.ModelState["Login"].Errors.Single().ErrorMessage);
+			Assert.AreEqual(
+				string.Format(AuthenticationResource.UserAlreadyExistsErrorMessage, model.Login),
+				_target.ModelState["Login"].Errors.Single().ErrorMessage);
 		}
 
 		private IFixture _fixture;
