@@ -15,9 +15,10 @@ namespace Chat.Controllers
 	[Authorize]
 	public class ChatController : Controller
 	{
-		public ChatController(int messageBufferSize)
+		public ChatController(int messageBufferSize, int maxMessageSize)
 		{
 			_messageBufferSize = messageBufferSize;
+			_maxMessageSize = maxMessageSize;
 		}
 
 		public ActionResult Index()
@@ -54,8 +55,29 @@ namespace Chat.Controllers
 						receiveResult = await wsContext.WebSocket.ReceiveAsync(buffer, CancellationToken.None);
 
 						await ms.WriteAsync(buffer.Array, 0, receiveResult.Count);
+
+						if (ms.Length >= _maxMessageSize)
+						{
+							await wsContext.WebSocket.CloseAsync(WebSocketCloseStatus.MessageTooBig, string.Empty, CancellationToken.None);
+
+							return;
+						}
 					}
 					while (!receiveResult.EndOfMessage);
+
+					if (receiveResult.MessageType == WebSocketMessageType.Close)
+					{
+						await wsContext.WebSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None);
+
+						return;
+					}
+
+					if (receiveResult.MessageType != WebSocketMessageType.Text)
+					{
+						await wsContext.WebSocket.CloseAsync(WebSocketCloseStatus.InvalidMessageType, string.Empty, CancellationToken.None);
+
+						return;
+					}
 
 					var receivedString = Encoding.UTF8.GetString(ms.ToArray());
 
@@ -67,5 +89,6 @@ namespace Chat.Controllers
 		}
 
 		private readonly int _messageBufferSize;
+		private readonly int _maxMessageSize;
 	}
 }

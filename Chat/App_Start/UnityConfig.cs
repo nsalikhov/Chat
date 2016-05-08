@@ -40,7 +40,8 @@ namespace Chat
 
 			container.RegisterType<AuthenticationController>();
 			container.RegisterType<HomeController>();
-			container.RegisterType<ChatController>(new InjectionFactory(c => new ChatController(Settings.MessageBufferSizeBytes)));
+			container.RegisterType<ChatController>(
+				new InjectionFactory(c => new ChatController(Settings.MessageBufferSizeBytes, Settings.MaxMessageSizeBytes)));
 		}
 	}
 }
