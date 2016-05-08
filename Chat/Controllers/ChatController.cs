@@ -2,11 +2,12 @@
 using System.IO;
 using System.Net;
 using System.Net.WebSockets;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using System.Web.WebSockets;
+
+using Chat.Processors;
 
 
 
@@ -15,10 +16,11 @@ namespace Chat.Controllers
 	[Authorize]
 	public class ChatController : Controller
 	{
-		public ChatController(int messageBufferSize, int maxMessageSize)
+		public ChatController(int messageBufferSize, int maxMessageSize, IChatProcessor chatProcessor)
 		{
 			_messageBufferSize = messageBufferSize;
 			_maxMessageSize = maxMessageSize;
+			_chatProcessor = chatProcessor;
 		}
 
 		public ActionResult Index()
@@ -42,53 +44,49 @@ namespace Chat.Controllers
 
 		private async Task ProcessRequest(AspNetWebSocketContext wsContext)
 		{
+			_chatProcessor.AddUser(User.Identity, wsContext.WebSocket);
+
 			var buffer = new ArraySegment<byte>(new byte[_messageBufferSize]);
 
-			while (wsContext.WebSocket.State == WebSocketState.Open)
+			try
 			{
-				using (var ms = new MemoryStream())
+				while (wsContext.WebSocket.State == WebSocketState.Open)
 				{
-					WebSocketReceiveResult receiveResult;
-
-					do
+					using (var ms = new MemoryStream())
 					{
-						receiveResult = await wsContext.WebSocket.ReceiveAsync(buffer, CancellationToken.None);
+						WebSocketReceiveResult receiveResult;
 
-						await ms.WriteAsync(buffer.Array, 0, receiveResult.Count);
-
-						if (ms.Length >= _maxMessageSize)
+						do
 						{
-							await wsContext.WebSocket.CloseAsync(WebSocketCloseStatus.MessageTooBig, string.Empty, CancellationToken.None);
+							receiveResult = await wsContext.WebSocket.ReceiveAsync(buffer, CancellationToken.None);
 
-							return;
+							await ms.WriteAsync(buffer.Array, 0, receiveResult.Count);
+
+							if (ms.Length >= _maxMessageSize)
+							{
+								await wsContext.WebSocket.CloseAsync(WebSocketCloseStatus.MessageTooBig, string.Empty, CancellationToken.None);
+
+								_chatProcessor.RemoveUser(User.Identity);
+
+								return;
+							}
 						}
+						while (!receiveResult.EndOfMessage);
+
+						await _chatProcessor.ProcessMessage(receiveResult.MessageType, ms.ToArray());
 					}
-					while (!receiveResult.EndOfMessage);
-
-					if (receiveResult.MessageType == WebSocketMessageType.Close)
-					{
-						await wsContext.WebSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None);
-
-						return;
-					}
-
-					if (receiveResult.MessageType != WebSocketMessageType.Text)
-					{
-						await wsContext.WebSocket.CloseAsync(WebSocketCloseStatus.InvalidMessageType, string.Empty, CancellationToken.None);
-
-						return;
-					}
-
-					var receivedString = Encoding.UTF8.GetString(ms.ToArray());
-
-					var outputBuffer = new ArraySegment<byte>(Encoding.UTF8.GetBytes(receivedString));
-
-					await wsContext.WebSocket.SendAsync(outputBuffer, WebSocketMessageType.Text, true, CancellationToken.None);
 				}
+			}
+			catch (Exception)
+			{
+				await wsContext.WebSocket.CloseAsync(WebSocketCloseStatus.InternalServerError, string.Empty, CancellationToken.None);
+
+				_chatProcessor.RemoveUser(User.Identity);
 			}
 		}
 
-		private readonly int _messageBufferSize;
+		private readonly IChatProcessor _chatProcessor;
 		private readonly int _maxMessageSize;
+		private readonly int _messageBufferSize;
 	}
 }
