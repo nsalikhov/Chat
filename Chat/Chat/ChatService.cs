@@ -24,6 +24,11 @@ namespace Chat.Chat
 			UsersInternal.TryRemove(login, out webSocket);
 		}
 
+		public bool TryGetUserSocket(string login, out WebSocket webSocket)
+		{
+			return UsersInternal.TryGetValue(login, out webSocket);
+		}
+
 		#endregion
 
 		private static readonly ConcurrentDictionary<string, WebSocket> UsersInternal = new ConcurrentDictionary<string, WebSocket>();

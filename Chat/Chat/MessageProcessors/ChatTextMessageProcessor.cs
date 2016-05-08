@@ -39,7 +39,7 @@ namespace Chat.Chat.MessageProcessors
 			else if (msg.Type == ChatMessageType.Private)
 			{
 				await _chatEventSender.SendPrivate(
-					msg.Recepient,
+					msg.Recipient,
 					new ChatEvent<ChatOutgoingMessage>
 					{
 						Type = ChatEventType.Message,

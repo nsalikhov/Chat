@@ -32,15 +32,21 @@ namespace Chat.Chat
 			await Task.WhenAll(sendTasks);
 		}
 
-		public Task SendPrivate<T>(string recipient, ChatEvent<T> chatEvent)
+		public async Task SendPrivate<T>(string recipient, ChatEvent<T> chatEvent)
 		{
-			throw new NotImplementedException();
+			WebSocket recipientWebSocket;
+
+			if (_chatService.TryGetUserSocket(recipient, out recipientWebSocket))
+			{
+				var data = new ArraySegment<byte>(_jsonSerializer.Serialize(chatEvent));
+
+				await recipientWebSocket.SendAsync(data, WebSocketMessageType.Text, true, CancellationToken.None);
+			}
 		}
 
 		#endregion
 
 		private readonly IChatService _chatService;
-
 		private readonly IJsonSerializer _jsonSerializer;
 	}
 }

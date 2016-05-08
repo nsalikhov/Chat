@@ -2,7 +2,7 @@
 {
 	public class ChatIncomingMessage
 	{
-		public string Recepient { get; set; }
+		public string Recipient { get; set; }
 
 		public ChatMessageType Type { get; set; }
 
