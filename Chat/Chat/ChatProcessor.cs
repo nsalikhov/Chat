@@ -5,6 +5,7 @@ using System.Net.WebSockets;
 using System.Security.Principal;
 using System.Threading.Tasks;
 
+using Chat.Chat.MessageProcessors;
 using Chat.DataContracts;
 
 
