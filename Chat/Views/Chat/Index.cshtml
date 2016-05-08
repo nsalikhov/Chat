@@ -40,7 +40,7 @@
 				.click(function() {
 					var msgText = $("#msgText");
 
-					socket.send("@User.Identity.Name" + ": " + msgText.val());
+					socket.send(JSON.stringify({ type: "Public", text: msgText.val() }));
 
 					$(msgText).val("");
 				});

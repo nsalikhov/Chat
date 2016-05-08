@@ -1,7 +1,10 @@
+using System.Collections.Generic;
 using System.Linq;
+using System.Net.WebSockets;
 using System.Web.Mvc;
 
 using Chat.Chat;
+using Chat.Chat.MessageProcessors;
 using Chat.Controllers;
 using Chat.Helpers;
 using Chat.Managers;
@@ -40,8 +43,15 @@ namespace Chat
 			container.RegisterType<IAuthenticationService, AuthenticationService>();
 			container.RegisterType<IUserRepository, UserInMemoryRepository>();
 			container.RegisterType<IUserManager, UserManager>();
-			container.RegisterType<IChatProcessor, ChatProcessor>();
 			container.RegisterType<IChatService, ChatService>();
+			container.RegisterType<IChatEventSender, ChatEventSender>();
+
+			container.RegisterType<IChatProcessor>(
+				new InjectionFactory(
+					c => new ChatProcessor(
+						c.Resolve<IChatEventSender>(),
+						GetMessageProcessors(c),
+						c.Resolve<IChatService>())));
 
 			container.RegisterType<AuthenticationController>();
 			container.RegisterType<HomeController>();
@@ -51,6 +61,17 @@ namespace Chat
 						Settings.MessageBufferSizeBytes,
 						Settings.MaxMessageSizeBytes,
 						c.Resolve<IChatProcessor>())));
+		}
+
+		private static IReadOnlyDictionary<WebSocketMessageType, IChatMessageProcessor> GetMessageProcessors(IUnityContainer container)
+		{
+			var dict = new Dictionary<WebSocketMessageType, IChatMessageProcessor>
+			{
+				{ WebSocketMessageType.Close, new ChatCloseMessageProcessor() },
+				{ WebSocketMessageType.Text, new ChatTextMessageProcessor(container.Resolve<IChatEventSender>(), container.Resolve<IJsonSerializer>()) }
+			};
+
+			return dict;
 		}
 	}
 }
