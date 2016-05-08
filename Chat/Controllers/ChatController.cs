@@ -64,11 +64,7 @@ namespace Chat.Controllers
 
 							if (ms.Length >= _maxMessageSize)
 							{
-								await wsContext.WebSocket.CloseAsync(WebSocketCloseStatus.MessageTooBig, string.Empty, CancellationToken.None);
-
-								_chatProcessor.RemoveUser(User.Identity);
-
-								return;
+								throw new InvalidOperationException("Message size too big.");
 							}
 						}
 						while (!receiveResult.EndOfMessage);
@@ -80,9 +76,9 @@ namespace Chat.Controllers
 			catch (Exception)
 			{
 				await wsContext.WebSocket.CloseAsync(WebSocketCloseStatus.InternalServerError, string.Empty, CancellationToken.None);
-
-				_chatProcessor.RemoveUser(User.Identity);
 			}
+
+			_chatProcessor.RemoveUser(User.Identity);
 		}
 
 		private readonly IChatProcessor _chatProcessor;
