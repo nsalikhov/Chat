@@ -5,7 +5,6 @@ using Chat.Chat;
 using Chat.Controllers;
 using Chat.Helpers;
 using Chat.Managers;
-using Chat.Processors;
 using Chat.Security;
 using Chat.Serializers;
 

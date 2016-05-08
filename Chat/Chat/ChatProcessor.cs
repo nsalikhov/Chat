@@ -4,12 +4,11 @@ using System.Net.WebSockets;
 using System.Security.Principal;
 using System.Threading.Tasks;
 
-using Chat.Chat;
 using Chat.DataContracts;
 
 
 
-namespace Chat.Processors
+namespace Chat.Chat
 {
 	public class ChatProcessor : IChatProcessor
 	{

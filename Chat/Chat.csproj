@@ -157,8 +157,8 @@
     <Compile Include="Managers\UserManager.cs" />
     <Compile Include="Models\SignInModel.cs" />
     <Compile Include="Models\SignUpModel.cs" />
-    <Compile Include="Processors\ChatProcessor.cs" />
-    <Compile Include="Processors\IChatProcessor.cs" />
+    <Compile Include="Chat\ChatProcessor.cs" />
+    <Compile Include="Chat\IChatProcessor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources\SharedResource.Designer.cs">
       <DependentUpon>SharedResource.resx</DependentUpon>
