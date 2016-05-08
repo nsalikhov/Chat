@@ -1,5 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.WebSockets;
 
 
@@ -24,9 +25,12 @@ namespace Chat.Chat
 			UsersInternal.TryRemove(login, out webSocket);
 		}
 
-		public bool TryGetUserSocket(string login, out WebSocket webSocket)
+		public WebSocket[] GetUsersSockets(string[] logins)
 		{
-			return UsersInternal.TryGetValue(login, out webSocket);
+			return UsersInternal
+				.Where(x => logins.Contains(x.Key))
+				.Select(x => x.Value)
+				.ToArray();
 		}
 
 		#endregion

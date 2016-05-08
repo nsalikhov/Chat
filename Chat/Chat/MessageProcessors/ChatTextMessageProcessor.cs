@@ -39,6 +39,7 @@ namespace Chat.Chat.MessageProcessors
 			else if (msg.Type == ChatMessageType.Private)
 			{
 				await _chatEventSender.SendPrivate(
+					login,
 					msg.Recipient,
 					new ChatEvent<ChatOutgoingMessage>
 					{
@@ -46,6 +47,7 @@ namespace Chat.Chat.MessageProcessors
 						Data = new ChatOutgoingMessage
 						{
 							Sender = login,
+							Recipient = msg.Recipient,
 							Type = ChatMessageType.Private,
 							Text = msg.Text
 						}

@@ -32,16 +32,15 @@ namespace Chat.Chat
 			await Task.WhenAll(sendTasks);
 		}
 
-		public async Task SendPrivate<T>(string recipient, ChatEvent<T> chatEvent)
+		public async Task SendPrivate<T>(string sender, string recipient, ChatEvent<T> chatEvent)
 		{
-			WebSocket recipientWebSocket;
+			var data = new ArraySegment<byte>(_jsonSerializer.Serialize(chatEvent));
 
-			if (_chatService.TryGetUserSocket(recipient, out recipientWebSocket))
-			{
-				var data = new ArraySegment<byte>(_jsonSerializer.Serialize(chatEvent));
+			var sendTasks = _chatService
+				.GetUsersSockets(new[] { sender, recipient })
+				.Select(x => x.SendAsync(data, WebSocketMessageType.Text, true, CancellationToken.None));
 
-				await recipientWebSocket.SendAsync(data, WebSocketMessageType.Text, true, CancellationToken.None);
-			}
+			await Task.WhenAll(sendTasks);
 		}
 
 		#endregion

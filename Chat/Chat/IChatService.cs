@@ -13,6 +13,6 @@ namespace Chat.Chat
 
 		void RemoveUser(string login);
 
-		bool TryGetUserSocket(string login, out WebSocket webSocket);
+		WebSocket[] GetUsersSockets(string[] logins);
 	}
 }

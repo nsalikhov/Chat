@@ -10,6 +10,6 @@ namespace Chat.Chat
 	{
 		Task SendPublic<T>(ChatEvent<T> chatEvent);
 
-		Task SendPrivate<T>(string recipient, ChatEvent<T> chatEvent);
+		Task SendPrivate<T>(string sender, string recipient, ChatEvent<T> chatEvent);
 	}
 }
