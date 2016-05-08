@@ -11,39 +11,92 @@
 	}
 </style>
 
-<div class="chat-messages">
-	<table id="messages-table" class="table table-striped"></table>
-</div>
-
-<div class="input-group">
-	<input type="text" class="form-control" id="msgText" placeholder="Input message text"/>
-	<span class="input-group-btn">
-		<button id="sendMsg" class="btn btn-primary">Send message</button>
-	</span>
+<div id="chat-container">
+	<div class="row">
+		<div class="col-md-10">
+			<div class="chat-messages">
+				<table id="messages-table" class="table table-striped">
+					<tbody data-bind="foreach: messages">
+						<tr>
+							<td data-bind="text: text"></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<div class="col-md-2">
+			<h4>Online users:</h4>
+			<div class="list-group" data-bind="foreach: users">
+				<div class="list-group-item" data-bind="text: $data"></div>
+			</div>
+		</div>
+	</div>
+	<div class="input-group">
+		<input type="text" class="form-control" placeholder="Input message text" data-bind="value: message, valueUpdate: 'input'" />
+		<span class="input-group-btn">
+			<button id="sendMsg" class="btn btn-primary" data-bind="click: sendMessage, enable: !!message()">Send message</button>
+		</span>
+	</div>
 </div>
 
 @section scripts
 {
 	<script type="text/javascript">
-		$(function() {
+		$(function () {
 			var socket = new WebSocket("ws://localhost/SimpleChat/Chat/Sync");
 
-			socket.onmessage = function(msg) {
-				$("#messages-table").append("<tr><td>" + msg.data + "</td></tr>");
+			var ChatViewModel = function() {
+				var self = this;
+
+				self.messages = ko.observableArray();
+				self.users = ko.observableArray();
+				self.message = ko.observable();
+
+				self.onMessage = function(event) {
+					if (event.Type === "UsersList") {
+						self.users.removeAll();
+
+						ko.utils.arrayPushAll(self.users, event.Data);
+					} else if (event.Type === "Message") {
+						var now = new Date();
+
+						var recipient = event.Data.recipient
+							? String.format(" => <{0}> ", event.Data.recipient)
+							: " ";
+						var msg = String.format(
+							"[{0}:{1}:{2}] <{3}>{4}{5}",
+							("0" + now.getHours()).slice(-2),
+							("0" + now.getMinutes()).slice(-2),
+							("0" + now.getSeconds()).slice(-2),
+							event.Data.Sender,
+							recipient,
+							event.Data.Text);
+
+						self.messages.push({ text: msg, isPrivate: event.Data.Type === "Private" });
+					}
+				};
+
+				self.sendMessage = function () {
+					socket.send(JSON.stringify({ type: "Public", text: self.message() }));
+
+					self.message("");
+				};
+			};
+
+			var viewModel = new ChatViewModel();
+
+			ko.applyBindings(viewModel, document.getElementById("chat-container"));
+
+			socket.onmessage = function(event) {
+				viewModel.onMessage(JSON.parse(event.data));
+
+				var chatMessages = $(".chat-messages");
+				chatMessages.scrollTop(chatMessages.height());
 			};
 
 			socket.onclose = function() {
 				alert("Socket connection closed.");
 			};
-
-			$("#sendMsg")
-				.click(function() {
-					var msgText = $("#msgText");
-
-					socket.send(JSON.stringify({ type: "Public", text: msgText.val() }));
-
-					$(msgText).val("");
-				});
 		});
 	</script>
 }

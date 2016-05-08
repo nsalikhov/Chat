@@ -13,7 +13,8 @@ namespace Chat
 					"~/Scripts/json2.js",
 					"~/Scripts/jquery-{version}.js",
 					"~/Scripts/bootstrap.js",
-					"~/Scripts/knockout-{version}.js"));
+					"~/Scripts/knockout-{version}.js",
+					"~/Scripts/helpers.js"));
 
 			bundles.Add(
 				new StyleBundle("~/Content/css").Include(
