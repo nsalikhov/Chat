@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Net;
 using System.Net.WebSockets;
 using System.Text;
@@ -14,6 +15,11 @@ namespace Chat.Controllers
 	[Authorize]
 	public class ChatController : Controller
 	{
+		public ChatController(int messageBufferSize)
+		{
+			_messageBufferSize = messageBufferSize;
+		}
+
 		public ActionResult Index()
 		{
 			return View();
@@ -23,7 +29,7 @@ namespace Chat.Controllers
 		{
 			if (HttpContext.IsWebSocketRequest)
 			{
-				HttpContext.AcceptWebSocketRequest(UserFunc);
+				HttpContext.AcceptWebSocketRequest(ProcessRequest);
 			}
 			else
 			{
@@ -33,20 +39,33 @@ namespace Chat.Controllers
 			return Task.FromResult(new EmptyResult());
 		}
 
-		private static async Task UserFunc(AspNetWebSocketContext webSocketContext)
+		private async Task ProcessRequest(AspNetWebSocketContext wsContext)
 		{
-			var buffer = new byte[1024];
-			var socket = webSocketContext.WebSocket;
+			var buffer = new ArraySegment<byte>(new byte[_messageBufferSize]);
 
-			while (socket.State == WebSocketState.Open)
+			while (wsContext.WebSocket.State == WebSocketState.Open)
 			{
-				await socket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
+				using (var ms = new MemoryStream())
+				{
+					WebSocketReceiveResult receiveResult;
 
-				var receivedString = Encoding.UTF8.GetString(buffer);
-				var outputBuffer = new ArraySegment<byte>(Encoding.UTF8.GetBytes($"You said: {receivedString}"));
+					do
+					{
+						receiveResult = await wsContext.WebSocket.ReceiveAsync(buffer, CancellationToken.None);
 
-				await socket.SendAsync(outputBuffer, WebSocketMessageType.Text, true, CancellationToken.None);
+						await ms.WriteAsync(buffer.Array, 0, receiveResult.Count);
+					}
+					while (!receiveResult.EndOfMessage);
+
+					var receivedString = Encoding.UTF8.GetString(ms.ToArray());
+
+					var outputBuffer = new ArraySegment<byte>(Encoding.UTF8.GetBytes(receivedString));
+
+					await wsContext.WebSocket.SendAsync(outputBuffer, WebSocketMessageType.Text, true, CancellationToken.None);
+				}
 			}
 		}
+
+		private readonly int _messageBufferSize;
 	}
 }
