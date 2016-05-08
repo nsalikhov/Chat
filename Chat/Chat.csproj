@@ -176,9 +176,9 @@
     <Compile Include="Security\PasswordConverter.cs" />
     <Compile Include="Serializers\IJsonSerializer.cs" />
     <Compile Include="Serializers\NewtonsoftJsonSerializer.cs" />
-    <Compile Include="Services\ChatService.cs" />
-    <Compile Include="Services\IChatEventSender.cs" />
-    <Compile Include="Services\IChatService.cs" />
+    <Compile Include="Chat\ChatService.cs" />
+    <Compile Include="Chat\IChatEventSender.cs" />
+    <Compile Include="Chat\IChatService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-theme.css" />

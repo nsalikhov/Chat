@@ -2,7 +2,7 @@
 
 
 
-namespace Chat.Services
+namespace Chat.Chat
 {
 	public interface IChatEventSender
 	{
