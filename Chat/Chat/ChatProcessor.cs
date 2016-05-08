@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.WebSockets;
 using System.Security.Principal;
@@ -12,10 +13,14 @@ namespace Chat.Chat
 {
 	public class ChatProcessor : IChatProcessor
 	{
-		public ChatProcessor(IChatService chatService, IChatEventSender chatEventSender)
+		public ChatProcessor(
+			IChatEventSender chatEventSender,
+			IReadOnlyDictionary<WebSocketMessageType, IChatMessageProcessor> chatMessageProcessors,
+			IChatService chatService)
 		{
-			_chatService = chatService;
 			_chatEventSender = chatEventSender;
+			_chatMessageProcessors = chatMessageProcessors;
+			_chatService = chatService;
 		}
 
 		#region Implementation of IChatProcessor
@@ -44,14 +49,23 @@ namespace Chat.Chat
 				});
 		}
 
-		public Task ProcessMessage(WebSocketMessageType messageType, byte[] requestData)
+		public async Task ProcessMessage(IIdentity user, WebSocket webSocket, WebSocketMessageType messageType, byte[] requestData)
 		{
-			throw new NotImplementedException();
+			IChatMessageProcessor msgProcessor;
+			if (_chatMessageProcessors.TryGetValue(messageType, out msgProcessor))
+			{
+				await msgProcessor.Process(user.Name, webSocket, requestData);
+
+				return;
+			}
+
+			throw new InvalidOperationException("Unknown web socket message type.");
 		}
 
 		#endregion
 
 		private readonly IChatEventSender _chatEventSender;
+		private readonly IReadOnlyDictionary<WebSocketMessageType, IChatMessageProcessor> _chatMessageProcessors;
 		private readonly IChatService _chatService;
 	}
 }

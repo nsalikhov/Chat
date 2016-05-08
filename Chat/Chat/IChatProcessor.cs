@@ -12,6 +12,6 @@ namespace Chat.Chat
 
 		void RemoveUser(IIdentity user);
 
-		Task ProcessMessage(WebSocketMessageType messageType, byte[] requestData);
+		Task ProcessMessage(IIdentity user, WebSocket webSocket, WebSocketMessageType messageType, byte[] requestData);
 	}
 }

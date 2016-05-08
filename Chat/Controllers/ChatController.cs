@@ -73,7 +73,7 @@ namespace Chat.Controllers
 						}
 						while (!receiveResult.EndOfMessage);
 
-						await _chatProcessor.ProcessMessage(receiveResult.MessageType, ms.ToArray());
+						await _chatProcessor.ProcessMessage(User.Identity, wsContext.WebSocket, receiveResult.MessageType, ms.ToArray());
 					}
 				}
 			}
