@@ -31,10 +31,14 @@ namespace Chat.Chat
 			_chatService.AddUser(user.Name, webSocket);
 
 			_chatEventSender.SendPublic(
-				new ChatEvent<string[]>
+				new ChatEvent<ChatUsersList>
 				{
 					Type = ChatEventType.UsersList,
-					Data = _chatService.Users.Select(x => x.Key).ToArray()
+					Data = new ChatUsersList
+					{
+						UpdateMessage = $"{user.Name} has joined the chat.",
+						Users = _chatService.Users.Select(x => x.Key).ToArray()
+					}
 				});
 		}
 
@@ -43,10 +47,14 @@ namespace Chat.Chat
 			_chatService.RemoveUser(user.Name);
 
 			_chatEventSender.SendPublic(
-				new ChatEvent<string[]>
+				new ChatEvent<ChatUsersList>
 				{
 					Type = ChatEventType.UsersList,
-					Data = _chatService.Users.Select(x => x.Key).ToArray()
+					Data = new ChatUsersList
+					{
+						UpdateMessage = $"{user.Name} has left the chat.",
+						Users = _chatService.Users.Select(x => x.Key).ToArray()
+					}
 				});
 		}
 

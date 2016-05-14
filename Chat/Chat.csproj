@@ -151,6 +151,7 @@
     <Compile Include="DataContracts\ChatIncomingMessage.cs" />
     <Compile Include="DataContracts\ChatOutgoingMessage.cs" />
     <Compile Include="DataContracts\ChatMessageType.cs" />
+    <Compile Include="DataContracts\ChatUsersList.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>

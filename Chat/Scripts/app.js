@@ -10,7 +10,9 @@
 			if (event.Type === "UsersList") {
 				self.users.removeAll();
 
-				ko.utils.arrayPushAll(self.users, event.Data);
+				ko.utils.arrayPushAll(self.users, event.Data.Users);
+
+				self.displayMessage(event.Data.UpdateMessage, "Notice");
 			} else if (event.Type === "Message") {
 				var now = new Date();
 
