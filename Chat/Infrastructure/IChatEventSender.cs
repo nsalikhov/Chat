@@ -4,7 +4,7 @@ using Chat.DataContracts;
 
 
 
-namespace Chat.Chat
+namespace Chat.Infrastructure
 {
 	public interface IChatEventSender
 	{

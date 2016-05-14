@@ -9,7 +9,7 @@ using Chat.Serializers;
 
 
 
-namespace Chat.Chat
+namespace Chat.Infrastructure
 {
 	public class ChatEventSender : IChatEventSender
 	{

@@ -6,7 +6,7 @@ using Chat.Serializers;
 
 
 
-namespace Chat.Chat.MessageProcessors
+namespace Chat.Infrastructure.MessageProcessors
 {
 	public class ChatTextMessageProcessor : IChatMessageProcessor
 	{

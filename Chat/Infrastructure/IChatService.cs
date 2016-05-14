@@ -3,7 +3,7 @@ using System.Net.WebSockets;
 
 
 
-namespace Chat.Chat
+namespace Chat.Infrastructure
 {
 	public interface IChatService
 	{

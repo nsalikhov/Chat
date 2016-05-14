@@ -5,7 +5,7 @@ using System.Net.WebSockets;
 
 
 
-namespace Chat.Chat
+namespace Chat.Infrastructure
 {
 	public class ChatService : IChatService
 	{

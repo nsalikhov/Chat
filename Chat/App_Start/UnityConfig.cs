@@ -3,10 +3,10 @@ using System.Linq;
 using System.Net.WebSockets;
 using System.Web.Mvc;
 
-using Chat.Chat;
-using Chat.Chat.MessageProcessors;
 using Chat.Controllers;
 using Chat.Helpers;
+using Chat.Infrastructure;
+using Chat.Infrastructure.MessageProcessors;
 using Chat.Managers;
 using Chat.Security;
 using Chat.Serializers;

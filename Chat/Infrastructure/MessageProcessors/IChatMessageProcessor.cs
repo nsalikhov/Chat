@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 
 
-namespace Chat.Chat.MessageProcessors
+namespace Chat.Infrastructure.MessageProcessors
 {
 	public interface IChatMessageProcessor
 	{

@@ -61,6 +61,15 @@ namespace Chat.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Input message text.
+        /// </summary>
+        public static string MessageInputPlaceholderText {
+            get {
+                return ResourceManager.GetString("MessageInputPlaceholderText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Online users.
         /// </summary>
         public static string OnlineUsersLabelText {

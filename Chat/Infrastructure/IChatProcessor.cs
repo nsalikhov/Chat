@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 
 
-namespace Chat.Chat
+namespace Chat.Infrastructure
 {
 	public interface IChatProcessor
 	{

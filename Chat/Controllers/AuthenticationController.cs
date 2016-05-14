@@ -35,7 +35,7 @@ namespace Chat.Controllers
 				{
 					if (await _authenticationService.Authenticate(model.Login, model.Password, model.RememberMe))
 					{
-						return RedirectToAction("Index", "Home");
+						return RedirectToAction("Index", "Chat");
 					}
 
 					ModelState.AddModelError(m => model.Login, AuthenticationResource.InvalidPasswordErrorMessage);

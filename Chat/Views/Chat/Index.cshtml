@@ -25,7 +25,7 @@
 		</div>
 	</div>
 	<div class="input-group">
-		<input type="text" class="form-control" placeholder="Input message text" data-bind="textInput: message, event: { keyup: onEnter }" />
+		<input type="text" class="form-control" placeholder="@ChatResource.MessageInputPlaceholderText" data-bind="textInput: message, event: { keyup: onEnter }" />
 		<span class="input-group-btn">
 			<button id="sendMsg" class="btn btn-primary" data-bind="click: sendMessage, enable: !!message()">@ChatResource.SendMessageButtonText</button>
 		</span>

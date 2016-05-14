@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 
 
-namespace Chat.Chat.MessageProcessors
+namespace Chat.Infrastructure.MessageProcessors
 {
 	public class ChatCloseMessageProcessor : IChatMessageProcessor
 	{
