@@ -2,22 +2,13 @@
 	ViewBag.Title = "Chat";
 }
 
-<style>
-	.chat-messages
-	{
-		margin: 30px 0;
-		height: 500px;
-		overflow: auto;
-	}
-</style>
-
 <div id="chat-container">
 	<div class="row">
 		<div class="col-md-10">
 			<div class="chat-messages">
 				<table id="messages-table" class="table table-striped">
 					<tbody data-bind="foreach: messages">
-						<tr>
+						<tr data-bind="css: 'chat-message-' + type">
 							<td data-bind="text: text"></td>
 						</tr>
 					</tbody>
@@ -32,71 +23,14 @@
 		</div>
 	</div>
 	<div class="input-group">
-		<input type="text" class="form-control" placeholder="Input message text" data-bind="value: message, valueUpdate: 'input'" />
+		<input type="text" class="form-control" placeholder="Input message text" data-bind="textInput: message, event: { keyup: onEnter }" />
 		<span class="input-group-btn">
-			<button id="sendMsg" class="btn btn-primary" data-bind="click: sendMessage, enable: !!message()">Send message</button>
-		</span>
+				<button id="sendMsg" class="btn btn-primary" data-bind="click: sendMessage, enable: !!message()">Send message</button>
+			</span>
 	</div>
 </div>
 
 @section scripts
 {
-	<script type="text/javascript">
-		$(function () {
-			var socket = new WebSocket("ws://localhost/SimpleChat/Chat/Sync");
-
-			var ChatViewModel = function() {
-				var self = this;
-
-				self.messages = ko.observableArray();
-				self.users = ko.observableArray();
-				self.message = ko.observable();
-
-				self.onMessage = function(event) {
-					if (event.Type === "UsersList") {
-						self.users.removeAll();
-
-						ko.utils.arrayPushAll(self.users, event.Data);
-					} else if (event.Type === "Message") {
-						var now = new Date();
-
-						var recipient = event.Data.recipient
-							? String.format(" => <{0}> ", event.Data.recipient)
-							: " ";
-						var msg = String.format(
-							"[{0}:{1}:{2}] <{3}>{4}{5}",
-							("0" + now.getHours()).slice(-2),
-							("0" + now.getMinutes()).slice(-2),
-							("0" + now.getSeconds()).slice(-2),
-							event.Data.Sender,
-							recipient,
-							event.Data.Text);
-
-						self.messages.push({ text: msg, isPrivate: event.Data.Type === "Private" });
-					}
-				};
-
-				self.sendMessage = function () {
-					socket.send(JSON.stringify({ type: "Public", text: self.message() }));
-
-					self.message("");
-				};
-			};
-
-			var viewModel = new ChatViewModel();
-
-			ko.applyBindings(viewModel, document.getElementById("chat-container"));
-
-			socket.onmessage = function(event) {
-				viewModel.onMessage(JSON.parse(event.data));
-
-				var chatMessages = $(".chat-messages");
-				chatMessages.scrollTop(chatMessages.height());
-			};
-
-			socket.onclose = function() {
-				alert("Socket connection closed.");
-			};
-		});
-	</script>
+	@Scripts.Render("~/bundles/chat")
 }

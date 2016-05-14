@@ -3,15 +3,29 @@
 	padding-bottom: 20px;
 }
 
-/* Set padding to keep content from hitting the edges */
 .body-content {
 	padding-left: 15px;
 	padding-right: 15px;
 }
 
-/* Override the default bootstrap behavior where horizontal description lists 
-   will truncate terms that are too long to fit in the left column 
-*/
 .dl-horizontal dt {
 	white-space: normal;
+}
+
+.chat-messages {
+	margin: 30px 0;
+	height: 500px;
+	overflow: auto;
+}
+
+#messages-table .chat-message-Private {
+	background-color: #d9edf7;
+}
+
+#messages-table .chat-message-Notice {
+	background-color: #dff0d8;
+}
+
+#messages-table .chat-message-Error {
+	background-color: #f2dede;
 }
