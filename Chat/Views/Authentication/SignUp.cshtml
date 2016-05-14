@@ -5,7 +5,7 @@
 	ViewBag.Title = "Sign Up";
 }
 
-@using (Html.BeginForm("SignUp", "Authentication", FormMethod.Post, new { @class = "form-horizontal" }))
+@using (Html.BeginForm("SignUp", "Authentication", FormMethod.Post, new { @class = "form-horizontal registration-form" }))
 {
 	<div class="form-group">
 		<label for="login" class="col-sm-2 control-label">@AuthenticationResource.LoginLabelText</label>
