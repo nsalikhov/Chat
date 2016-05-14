@@ -2,6 +2,7 @@
 Simple chat with registration and communication via public and private messages.
 
 Project is based on ASP.NET MVC5, WebSockets and KnockoutJs.
+
 For simplicity:
  - there is no inputs validation except checking required fields;
  - return url is not implemented;
