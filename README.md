@@ -9,4 +9,3 @@ For simplicity:
  - only a few classes are covered by unit test;
  - users data stored in memory, another storage can be used by implementing IUserRepository interface;
  - ...and more others imperfections.
-
