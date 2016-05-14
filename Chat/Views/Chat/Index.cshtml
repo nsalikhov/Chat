@@ -1,5 +1,7 @@
-﻿@{
-	ViewBag.Title = Chat.Resources.Chat.Title;
+﻿@using Chat.Resources
+
+@{
+	ViewBag.Title = ChatResource.Title;
 }
 
 <div id="chat-container">
@@ -16,7 +18,7 @@
 			</div>
 		</div>
 		<div class="col-md-2">
-			<h4>@Chat.Resources.Chat.OnlineUsersLabelText:</h4>
+			<h4>@ChatResource.OnlineUsersLabelText:</h4>
 			<div class="list-group" data-bind="foreach: users">
 				<div class="list-group-item" data-bind="text: $data"></div>
 			</div>
@@ -25,7 +27,7 @@
 	<div class="input-group">
 		<input type="text" class="form-control" placeholder="Input message text" data-bind="textInput: message, event: { keyup: onEnter }" />
 		<span class="input-group-btn">
-			<button id="sendMsg" class="btn btn-primary" data-bind="click: sendMessage, enable: !!message()">@Chat.Resources.Chat.SendMessageButtonText</button>
+			<button id="sendMsg" class="btn btn-primary" data-bind="click: sendMessage, enable: !!message()">@ChatResource.SendMessageButtonText</button>
 		</span>
 	</div>
 </div>
